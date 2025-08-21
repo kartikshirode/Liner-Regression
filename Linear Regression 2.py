@@ -8,7 +8,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler
 import joblib
 
-df = pd.read_csv(r"D:\Kartik\Learning\ML\Liner Regression\House Price India.csv")
+df = pd.read_csv(r"https://github.com/kartikshirode/Liner-Regression/raw/main/House%20Price%20India.csv")
 df = df.drop(['id', 'Postal Code', 'Lattitude', 'Longitude', 'Date'], axis=1, errors='ignore')
 
 for col in df.select_dtypes(include='int64').columns:
@@ -59,3 +59,4 @@ plt.title('Feature Coefficients')
 plt.xlabel('Features')
 plt.ylabel('Coefficient Value')
 plt.show()
+
