@@ -1,0 +1,56 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+
+np.random.seed(17)
+X = np.linspace(0, 10, 100).reshape(-1, 1)  
+Y = 24 * np.exp(-0.3 * X) + np.random.normal(0, 0.5, X.shape)  
+
+Xtrain, Xtest, Ytrain, Ytest = train_test_split(X, Y, test_size=0.2)
+
+best_score = -np.inf
+best_model = None
+best_poly = None
+best_pred = None
+best_degree = 0
+
+for d in range(0, 7):
+    poly = PolynomialFeatures(degree=d)
+    polyxtrain = poly.fit_transform(Xtrain)
+    polyxtest = poly.transform(Xtest)
+
+    model = LinearRegression()
+    model.fit(polyxtrain, Ytrain)
+    y_perd = model.predict(polyxtest)
+
+    score = r2_score(Ytest, y_perd)
+
+    if score > best_score:
+        best_score = score
+        best_model = model
+        best_poly = poly
+        best_pred = y_perd
+        best_degree = d
+
+    print(f"R2 Score: {score:.4f}, Degree: {d}")
+
+print(f"Best R2 Score: {best_score:.4f} with Degree: {best_degree}")
+print(f"Intercept: {best_model.intercept_}")
+print(f"Coefficients: {best_model.coef_}")
+
+X_poly_full = best_poly.transform(X)
+Y_full_pred = best_model.predict(X_poly_full)
+
+plt.figure(figsize=(10, 6))
+plt.scatter(X, Y, color='skyblue', label='Actual Data')
+plt.plot(X, Y_full_pred, color='red', linewidth=2, label=f'Best Polynomial Fit (Degree {best_degree})')
+plt.title("Battery Life Based on Screen Usage (Polynomial Regression)")
+plt.xlabel("Screen Time (hours/day)")
+plt.ylabel("Battery Life (%)")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
